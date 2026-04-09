@@ -34,6 +34,8 @@ export class KmsStack extends cdk.Stack {
         KMS_KEY_ALIAS_S3_CSE: kmsKey.keyArn, // Using ARN as the generator key ID
         S3_BUCKET: bucket.bucketName,
         AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+        // Internal endpoint for Lambda to reach LocalStack
+        AWS_ENDPOINT_URL: `http://localstack:4566`,
       },
       timeout: cdk.Duration.seconds(30),
     });

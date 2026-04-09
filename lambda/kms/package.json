@@ -8,14 +8,19 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "cdklocal": "cdklocal",
+    "localstack-bootstrap": "npx cdklocal bootstrap",
+    "localstack-deploy": "npx cdklocal deploy",
+    "localstack-destroy": "npx cdklocal destroy"
   },
   "devDependencies": {
     "@types/jest": "^30",
     "@types/node": "^24.10.1",
+    "aws-cdk": "2.1118.0",
+    "aws-cdk-local": "^3.0.4",
     "jest": "^30",
     "ts-jest": "^29",
-    "aws-cdk": "2.1118.0",
     "ts-node": "^10.9.2",
     "typescript": "~5.9.3"
   },

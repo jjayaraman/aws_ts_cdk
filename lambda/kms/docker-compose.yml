@@ -1,0 +1,16 @@
+services:
+  localstack:
+    container_name: localstack_kms_test
+    image: localstack/localstack:latest
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+    environment:
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN:-} # Pick up from host environment
+      - DEBUG=${DEBUG:-0}
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_DEFAULT_REGION=eu-west-2
+    volumes:
+      - "././localstack_data:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
