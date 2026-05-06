@@ -4,6 +4,7 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import * as logs from 'aws-cdk-lib/aws-logs';
 import * as path from 'path';
 
 export class KmsStack extends cdk.Stack {
@@ -25,7 +26,13 @@ export class KmsStack extends cdk.Stack {
       encryption: s3.BucketEncryption.S3_MANAGED, // Server-side is still recommended as baseline
     });
 
-    // 3. Lambda Function
+    // 3. Managed CloudWatch Log Group for Lambda
+    const logGroup = new logs.LogGroup(this, 'S3CseHandlerLogGroup', {
+      retention: logs.RetentionDays.ONE_WEEK,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    // 4. Lambda Function
     const cseLambda = new lambda.Function(this, 'S3CseHandler', {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'index.handler',
@@ -38,13 +45,14 @@ export class KmsStack extends cdk.Stack {
         AWS_ENDPOINT_URL: `http://localstack:4566`,
       },
       timeout: cdk.Duration.seconds(30),
+      logGroup: logGroup,
     });
 
-    // 4. Grant Permissions
+    // 5. Grant Permissions
     kmsKey.grantEncryptDecrypt(cseLambda);
     bucket.grantReadWrite(cseLambda);
 
-    // 5. API Gateway
+    // 6. API Gateway
     const api = new apigateway.RestApi(this, 'S3CseApi', {
       restApiName: 'S3 Client-Side Encryption Service',
     });
